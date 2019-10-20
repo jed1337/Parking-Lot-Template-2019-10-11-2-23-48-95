@@ -22,6 +22,9 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class ParkingLotServieTest {
+    private static final String MY_PARKING_LOT = "my parking lot";
+    private static final String INVALID_PARKING_LOT = "invalid parking lot";
+
     @Autowired
     private ParkingLotService parkingLotService;
 
@@ -30,7 +33,7 @@ public class ParkingLotServieTest {
 
     @Test
     public void should_create_new_parkingLot() {
-        ParkingLot parkingLot = new ParkingLot("my parking lot");
+        ParkingLot parkingLot = new ParkingLot(MY_PARKING_LOT);
         parkingLot.setCapacity(30);
         parkingLot.setLocation("Manila");
 
@@ -38,25 +41,24 @@ public class ParkingLotServieTest {
 
         ParkingLot savedParkingLot = parkingLotService.save(parkingLot);
 
-        assertThat(savedParkingLot.getName(), is("my parking lot"));
+        assertThat(savedParkingLot.getName(), is(MY_PARKING_LOT));
         assertThat(savedParkingLot.getCapacity(), is(30));
         assertThat(savedParkingLot.getLocation(), is("Manila"));
     }
 
     @Test
     public void should_delete_existing_parkingLot() {
-        String parkingLotName = "my parking lot";
-        ParkingLot parkingLot = new ParkingLot(parkingLotName);
-        when(parkingLotRepository.findById(parkingLotName)).thenReturn(Optional.of(parkingLot));
+        ParkingLot parkingLot = new ParkingLot(MY_PARKING_LOT);
+        when(parkingLotRepository.findById(MY_PARKING_LOT)).thenReturn(Optional.of(parkingLot));
 
-        boolean wasDeleted = parkingLotService.delete(parkingLotName);
+        boolean wasDeleted = parkingLotService.delete(MY_PARKING_LOT);
 
         assertThat(wasDeleted, is(true));
     }
 
     @Test
     public void should_not_delete_non_existing_parkingLot() {
-        boolean wasDeleted = parkingLotService.delete("invalid parking lot");
+        boolean wasDeleted = parkingLotService.delete(INVALID_PARKING_LOT);
 
         assertThat(wasDeleted, is(false));
     }
@@ -80,32 +82,30 @@ public class ParkingLotServieTest {
 
     @Test
     public void should_get_one_parking_lot() {
-        String parkingLotName = "my parking lot";
-        when(parkingLotRepository.findById(parkingLotName))
-                .thenReturn(Optional.of(new ParkingLot(parkingLotName)));
+        when(parkingLotRepository.findById(MY_PARKING_LOT))
+                .thenReturn(Optional.of(new ParkingLot(MY_PARKING_LOT)));
 
-        Optional<ParkingLot> foundParkingLot = parkingLotService.getParkingLot(parkingLotName);
+        Optional<ParkingLot> foundParkingLot = parkingLotService.getParkingLot(MY_PARKING_LOT);
 
         assertThat(foundParkingLot.isPresent(), is(true));
         foundParkingLot.ifPresent(parkingLot->{
-            assertThat(parkingLot.getName(), is(parkingLotName));
+            assertThat(parkingLot.getName(), is(MY_PARKING_LOT));
         });
     }
 
     @Test
     public void should_update_existing_parkingLot_capacity() {
-        String parkingLotName = "my parking lot";
-        when(parkingLotRepository.findById(parkingLotName))
-                .thenReturn(Optional.of(new ParkingLot(parkingLotName)));
+        when(parkingLotRepository.findById(MY_PARKING_LOT))
+                .thenReturn(Optional.of(new ParkingLot(MY_PARKING_LOT)));
 
-        boolean wasUpdated = parkingLotService.updateCapacity(parkingLotName, 50);
+        boolean wasUpdated = parkingLotService.updateCapacity(MY_PARKING_LOT, 50);
 
         assertThat(wasUpdated, is(true));
     }
 
     @Test
     public void should_not_update_existing_non_existing_parkingLot() {
-        boolean wasUpdated = parkingLotService.updateCapacity("invalid parking lot", 50);
+        boolean wasUpdated = parkingLotService.updateCapacity(INVALID_PARKING_LOT, 50);
 
         assertThat(wasUpdated, is(false));
     }
