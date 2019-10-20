@@ -18,6 +18,10 @@ public class ParkingLotService {
         return parkingLotRepository.findAll(pageRequest);
     }
 
+    public Optional<ParkingLot> getParkingLot(String parkingLotName) {
+        return parkingLotRepository.findById(parkingLotName);
+    }
+
     public ParkingLot save(ParkingLot parkingLot) {
         return parkingLotRepository.save(parkingLot);
     }

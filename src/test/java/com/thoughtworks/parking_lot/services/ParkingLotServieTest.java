@@ -77,4 +77,18 @@ public class ParkingLotServieTest {
         Page<ParkingLot> actualParkingLotList = parkingLotService.listMultipleParkingLots(pageRequest);
         assertThat(actualParkingLotList.getTotalElements(), is(2L));
     }
+
+    @Test
+    public void should_get_one_parking_lot() {
+        String parkingLotName = "my parking lot";
+        when(parkingLotRepository.findById(parkingLotName))
+                .thenReturn(Optional.of(new ParkingLot(parkingLotName)));
+
+        Optional<ParkingLot> foundParkingLot = parkingLotService.getParkingLot(parkingLotName);
+
+        assertThat(foundParkingLot.isPresent(), is(true));
+        foundParkingLot.ifPresent(parkingLot->{
+            assertThat(parkingLot.getName(), is(parkingLotName));
+        });
+    }
 }
