@@ -14,6 +14,10 @@ public class ParkingLot {
     public ParkingLot() {
     }
 
+    public ParkingLot(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }
