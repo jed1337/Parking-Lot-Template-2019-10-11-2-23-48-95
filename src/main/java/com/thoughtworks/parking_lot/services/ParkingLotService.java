@@ -36,4 +36,17 @@ public class ParkingLotService {
         }
         return false;
     }
+
+    public boolean updateCapacity(String parkingLotName, int newCapacity) {
+        Optional<ParkingLot> optionalParkingLot = parkingLotRepository.findById(parkingLotName);
+
+        if (optionalParkingLot.isPresent()) {
+            ParkingLot foundParkingLot = optionalParkingLot.get();
+            foundParkingLot.setCapacity(newCapacity);
+            parkingLotRepository.save(foundParkingLot);
+            return true;
+        }
+        return false;
+
+    }
 }

@@ -91,4 +91,22 @@ public class ParkingLotServieTest {
             assertThat(parkingLot.getName(), is(parkingLotName));
         });
     }
+
+    @Test
+    public void should_update_existing_parkingLot_capacity() {
+        String parkingLotName = "my parking lot";
+        when(parkingLotRepository.findById(parkingLotName))
+                .thenReturn(Optional.of(new ParkingLot(parkingLotName)));
+
+        boolean wasUpdated = parkingLotService.updateCapacity(parkingLotName, 50);
+
+        assertThat(wasUpdated, is(true));
+    }
+
+    @Test
+    public void should_not_update_existing_non_existing_parkingLot() {
+        boolean wasUpdated = parkingLotService.updateCapacity("invalid parking lot", 50);
+
+        assertThat(wasUpdated, is(false));
+    }
 }
