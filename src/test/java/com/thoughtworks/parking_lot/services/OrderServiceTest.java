@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -30,5 +31,7 @@ public class OrderServiceTest {
         Order savedOrder = orderService.save(order);
 
         assertThat(savedOrder.getOrderNum(), is(order.getOrderNum()));
+        assertThat(savedOrder.getCloseTime(), is(nullValue()));
+        assertThat(savedOrder.getOrderStatus(), is("OPEN"));
     }
 }
