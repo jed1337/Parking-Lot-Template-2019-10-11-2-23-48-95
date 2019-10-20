@@ -2,18 +2,22 @@ package com.thoughtworks.parking_lot.services;
 
 import com.thoughtworks.parking_lot.entities.ParkingLot;
 import com.thoughtworks.parking_lot.repositories.ParkingLotRepository;
-import org.hamcrest.MatcherAssert;
-import org.hibernate.validator.internal.constraintvalidators.bv.AssertTrueValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -55,5 +59,22 @@ public class ParkingLotServieTest {
         boolean wasDeleted = parkingLotService.delete("invalid parking lot");
 
         assertThat(wasDeleted, is(false));
+    }
+
+    @Test
+    public void should_get_multiple_parking_lots() {
+        List<ParkingLot> givenParkingLotList = Arrays.asList(
+                new ParkingLot("Parking lot 1"),
+                new ParkingLot("Parking lot 2")
+        );
+
+        PageRequest pageRequest = PageRequest.of(0, 15);
+
+        when(parkingLotRepository.findAll(eq(pageRequest))).thenReturn(
+                new PageImpl<>(givenParkingLotList)
+        );
+
+        Page<ParkingLot> actualParkingLotList = parkingLotService.listMultipleParkingLots(pageRequest);
+        assertThat(actualParkingLotList.getTotalElements(), is(2L));
     }
 }
