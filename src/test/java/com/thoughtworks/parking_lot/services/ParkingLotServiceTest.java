@@ -21,7 +21,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class ParkingLotServieTest {
+public class ParkingLotServiceTest {
     private static final String MY_PARKING_LOT = "my parking lot";
     private static final String INVALID_PARKING_LOT = "invalid parking lot";
 
