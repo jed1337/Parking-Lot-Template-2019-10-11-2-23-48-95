@@ -24,10 +24,15 @@ public class ParkingLotServieTest {
     @Test
     public void should_create_new_parkingLot() {
         ParkingLot parkingLot = new ParkingLot("my parking lot");
+        parkingLot.setCapacity(30);
+        parkingLot.setLocation("Manila");
+
         when(parkingLotRepository.save(any(ParkingLot.class))).thenReturn(parkingLot);
 
         ParkingLot savedParkingLot = parkingLotService.save(parkingLot);
 
         assertThat(savedParkingLot.getName(), is("my parking lot"));
+        assertThat(savedParkingLot.getCapacity(), is(30));
+        assertThat(savedParkingLot.getLocation(), is("Manila"));
     }
 }
