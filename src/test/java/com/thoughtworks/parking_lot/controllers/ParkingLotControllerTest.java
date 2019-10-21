@@ -8,18 +8,24 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.AbstractPageRequest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -80,5 +86,47 @@ public class ParkingLotControllerTest {
 
         result.andExpect(status().isBadRequest())
                 .andDo(print());
+    }
+
+    @Test
+    public void should_be_able_to_view_multiple_parking_lots() throws Exception {
+        List<ParkingLot> givenParkingLotList = Arrays.asList(
+                new ParkingLot("Parking lot 1"),
+                new ParkingLot("Parking lot 2")
+        );
+
+        when(parkingLotService.listMultipleParkingLots(any(PageRequest.class))).thenReturn(
+                new PageImpl<>(givenParkingLotList)
+        );
+
+        ResultActions result = mvc.perform(get("/parking-lots?page=0"));
+
+        result.andExpect(status().isOk())
+            .andDo(print())
+            .andExpect(jsonPath("$.totalElements", is(2)))
+            .andExpect(jsonPath("$.content[0].name", is("Parking lot 1")))
+            .andExpect(jsonPath("$.content[1].name", is("Parking lot 2")))
+        ;
+    }
+
+    @Test
+    public void should_not_be_able_to_view_parking_lots_if_outside_page_range() throws Exception {
+        List<ParkingLot> givenParkingLotList = Arrays.asList(
+                new ParkingLot("Parking lot 1"),
+                new ParkingLot("Parking lot 2")
+        );
+
+        when(parkingLotService.listMultipleParkingLots(any(PageRequest.class))).thenReturn(
+                new PageImpl<>(givenParkingLotList, PageRequest.of(1, 15), 2)
+        );
+
+        ResultActions result = mvc.perform(get("/parking-lots?page=1"));
+
+        result.andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.totalElements", is(17)))
+                .andExpect(jsonPath("$.content[0].name", is("Parking lot 1")))
+                .andExpect(jsonPath("$.content[1].name", is("Parking lot 2")))
+        ;
     }
 }
