@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -20,7 +17,18 @@ public class ParkingLotController {
     private ParkingLotService parkingLotService;
 
     @PostMapping(produces = APPLICATION_JSON_VALUE)
-    public HttpEntity<ParkingLot> saveParkingLot(@RequestBody ParkingLot parkingLot) {
+    public ResponseEntity<ParkingLot> saveParkingLot(@RequestBody ParkingLot parkingLot) {
         return new ResponseEntity<>(parkingLotService.save(parkingLot), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping(produces = {"application/json"})
+    @RequestMapping("/{name}")
+    public ResponseEntity<String> deleteParkingLot(@PathVariable String name){
+        boolean wasDeleted = parkingLotService.delete(name);
+
+        if(wasDeleted){
+            return new ResponseEntity<>("Deleted parkingLot " + name, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Cannot delete parkingLot " + name, HttpStatus.BAD_REQUEST);
     }
 }

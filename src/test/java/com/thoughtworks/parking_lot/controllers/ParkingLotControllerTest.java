@@ -18,6 +18,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -29,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles(profiles = "test")
 public class ParkingLotControllerTest {
     private static final String MY_PARKING_LOT = "my parking lot";
+    private static final String INVALID_PARKING_LOT = "invalid parking lot";
 
     @Autowired
     private MockMvc mvc;
@@ -58,5 +60,25 @@ public class ParkingLotControllerTest {
                 .andExpect(jsonPath("$.capacity", is(50)))
                 .andExpect(jsonPath("$.location", is("Manila")))
         ;
+    }
+
+    @Test
+    public void should_delete_parking_lot() throws Exception {
+        when(parkingLotService.delete(MY_PARKING_LOT)).thenReturn(true);
+
+        ResultActions result = mvc.perform(delete("/parking-lots/"+MY_PARKING_LOT));
+
+        result.andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    public void should_note_delete_non_existing_parking_lot() throws Exception {
+        when(parkingLotService.delete(INVALID_PARKING_LOT)).thenReturn(false);
+
+        ResultActions result = mvc.perform(delete("/parking-lots/"+INVALID_PARKING_LOT));
+
+        result.andExpect(status().isBadRequest())
+                .andDo(print());
     }
 }
