@@ -21,7 +21,7 @@ public class ParkingLotController {
         return new ResponseEntity<>(parkingLotService.save(parkingLot), HttpStatus.CREATED);
     }
 
-    @DeleteMapping(produces = {"application/json"})
+    @DeleteMapping(produces = APPLICATION_JSON_VALUE)
     @RequestMapping("/{name}")
     public ResponseEntity<String> deleteParkingLot(@PathVariable String name){
         boolean wasDeleted = parkingLotService.delete(name);
@@ -31,4 +31,5 @@ public class ParkingLotController {
         }
         return new ResponseEntity<>("Cannot delete parkingLot " + name, HttpStatus.BAD_REQUEST);
     }
+
 }
